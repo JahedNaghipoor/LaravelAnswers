@@ -64,6 +64,23 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="card-footer">
+
+                            <a href="{{ url('login/facebook') }}" class="btn btn-social btn-facebook">
+                                <i class="fa fa-facebook"></i>
+                                Login with Facebook
+                            </a>
+
+                            <a href="{{ url('login/google') }}" class="btn btn-social btn-google">
+                                <i class="fa fa-google"></i>
+                                Login with Google
+                            </a>
+
+                            <a href="{{ url('login/github') }}" class="btn btn-social btn-github">
+                                <i class="fa fa-github"></i>
+                                Login with Github
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>

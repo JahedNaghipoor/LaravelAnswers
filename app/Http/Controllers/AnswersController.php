@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Answer;
+use App\Notifications\NewAswerSubmitted;
 use App\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,12 +33,17 @@ class AnswersController extends Controller
             'content' => 'required|min:15',
             'question_id'=> 'required|integer'
         ]);
-
-        $answer = new Answer();
+        if (!$request->answer_id) {
+            $answer = new Answer();
+        } else {
+            $answer = Answer::find($request->answer_id);
+        }
         $answer->content = $request->content;
         $answer->user()->associate(Auth::id());
         $question = Question::findOrFail($request->question_id);
         $question->answers()->save($answer);
+
+        $question->user->notify(new NewAswerSubmitted($answer, $question, Auth::user()->name));
 
         return redirect()->route('questions.show', $question->id);
     }
@@ -50,7 +56,13 @@ class AnswersController extends Controller
      */
     public function edit($id)
     {
-        //
+        $answer = Answer::findOrFail($id);
+
+        if ($answer->user->id !== Auth::id()) {
+            return abort(403);
+        } else {
+            return view('answers.edit')->with('answer', $answer);
+        }
     }
 
     /**
@@ -73,6 +85,8 @@ class AnswersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $answer = Answer::findOrFail($id);
+        $answer->delete();
+        return redirect()->route('questions.show', $answer->question->id);
     }
 }

@@ -5,10 +5,14 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Cashier\Billable;
+use Laravel\Scout\Searchable;
 
 class User extends Authenticatable
 {
     use Notifiable;
+    use Searchable;
+    use Billable;
 
     /**
      * The attributes that are mass assignable.
@@ -37,7 +41,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function questions(){
+    public function questions()
+    {
 
         return $this->hasMany('App\Question');
     }
@@ -46,5 +51,17 @@ class User extends Authenticatable
     {
 
         return $this->hasMany('App\Answer');
+    }
+
+    public function notificationPreferences()
+    {
+
+        return ['mail'];
+    }
+
+    public function accounts()
+    {
+
+        return $this->hasMany('App\SocialAccount');
     }
 }
